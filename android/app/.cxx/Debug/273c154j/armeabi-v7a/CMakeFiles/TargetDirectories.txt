@@ -1,0 +1,2 @@
+C:/Users/Daniel/Figma-LEDapp/android/app/.cxx/Debug/273c154j/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/Users/Daniel/Figma-LEDapp/android/app/.cxx/Debug/273c154j/armeabi-v7a/CMakeFiles/rebuild_cache.dir
