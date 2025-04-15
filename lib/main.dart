@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'screens/login_screen.dart';
-import 'screens/rooms_screen.dart';
+import 'screens/main_navigation_screen.dart';
 import 'screens/room_screen.dart';
 
 void main() {
@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const LoginScreen(),
-        '/rooms': (context) => const RoomsScreen(),
+        '/home': (context) => const MainNavigationScreen(),
         '/room': (context) => const RoomScreen(),
       },
     );
