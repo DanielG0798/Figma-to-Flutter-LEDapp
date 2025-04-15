@@ -1,14 +1,18 @@
 class Light {
-  final String name;
+  // final String address;
+  // final String roomID;
+  final String lightName;
   bool isOn;
-  String color; // Added for color
+  String lightColor; // Added for color
   String mode; // Added for mode
 
   // Constructor with default values
   Light({
-    required this.name,
+    // required this.address,
+    // required this.roomID,
+    required this.lightName,
     this.isOn = false,
-    this.color = 'white',
+    this.lightColor = 'white',
     this.mode = 'normal',
   });
 
@@ -19,7 +23,7 @@ class Light {
 
   // Method to change light color
   void changeColor(String newColor) {
-    color = newColor;
+    lightColor = newColor;
   }
 
   // Method to change light mode

@@ -49,7 +49,8 @@ class _RoomScreenState extends State<RoomScreen> {
                 setState(() {
                   String hexColor = // hex color to hex string
                       '#${selectedColor.value.toRadixString(16).substring(2)}';
-                  lights.add(Light(name: nameController.text, color: hexColor));
+                  lights.add(Light(
+                      lightName: nameController.text, lightColor: hexColor));
                 });
               }
               Navigator.of(context).pop();
@@ -64,13 +65,13 @@ class _RoomScreenState extends State<RoomScreen> {
   // Function will help modify the light color
   void _modifyLight(int index) {
     Color pickerColor =
-        Color(int.parse(lights[index].color.replaceFirst('#', '0xff')));
+        Color(int.parse(lights[index].lightColor.replaceFirst('#', '0xff')));
     // Modification of existing light happens here
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Pick a color!'),
+          title: const Text('Pick a color'),
           content: SingleChildScrollView(
             child: ColorPicker(
               pickerColor: pickerColor,
