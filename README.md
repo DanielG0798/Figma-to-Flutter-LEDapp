@@ -25,8 +25,8 @@ A Flutter-based mobile application to control LED lights. The UI is inspired by 
 
 1. Clone the repo:
    ```bash
-   git clone https://github.com/DanielG0798/Figma-LEDapp.git
-   cd led-light-controller
+    git clone https://github.com/DanielG0798/Figma-LEDapp.git
+    cd Figma-LEDapp
    ```
 2. Get dependencies
    ```bash
