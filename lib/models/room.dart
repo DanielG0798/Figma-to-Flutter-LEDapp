@@ -1,13 +1,13 @@
 import '../models/light.dart';
 
 class Room {
-  final String id;
-  final String name;
+  final String roomID;
+  final String roomName;
   final List<Light> lights;
 
   Room({
-    required this.id,
-    required this.name,
+    required this.roomID,
+    required this.roomName,
     List<Light>? lights,
   }) : lights = lights ?? [];
 }

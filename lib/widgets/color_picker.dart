@@ -21,7 +21,7 @@ class LEDColorPickerState extends State<LEDColorPicker> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Pick a color!'),
+          title: const Text('Pick a color'),
           content: SingleChildScrollView(
             child: ColorPicker(
               pickerColor: pickerColor,
