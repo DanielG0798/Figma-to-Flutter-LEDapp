@@ -24,20 +24,22 @@ class _RoomScreenState extends State<RoomScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Add New Light'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min, // Dialog size formatting
-          children: [
-            TextField(
-              controller: nameController,
-              decoration: const InputDecoration(labelText: 'Light name'),
-            ),
-            const SizedBox(height: 16),
-            // Widgeet for colorpicking
-            ColorPicker(
-              pickerColor: selectedColor,
-              onColorChanged: (color) => selectedColor = color,
-            ),
-          ],
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameController,
+                decoration: const InputDecoration(labelText: 'Light name'),
+              ),
+              const SizedBox(height: 16),
+              // Widgeet for colorpicking
+              ColorPicker(
+                pickerColor: selectedColor,
+                onColorChanged: (color) => selectedColor = color,
+              ),
+            ],
+          ),
         ),
         actions: [
           TextButton(
