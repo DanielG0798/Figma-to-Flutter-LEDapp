@@ -21,8 +21,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _handleLogin() {
     if (_formKey.currentState!.validate()) {
-      // For now, just navigate to rooms screen
-      Navigator.pushReplacementNamed(context, '/rooms');
+      // Navigate to main navigation screen
+      Navigator.pushReplacementNamed(context, '/home');
     }
   }
 
