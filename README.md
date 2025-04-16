@@ -1,4 +1,4 @@
-# Figma-LEDapp
+# Figma-to-Flutter-LEDapp
 
 A Flutter-based mobile application to control LED lights. The UI is inspired by a custom design prototype made in Figma, aiming for accessability and intuitive user experience.
 
@@ -25,8 +25,8 @@ A Flutter-based mobile application to control LED lights. The UI is inspired by 
 
 1. Clone the repo:
    ```bash
-    git clone https://github.com/DanielG0798/Figma-LEDapp.git
-    cd Figma-LEDapp
+    git clone https://github.com/DanielG0798/Figma-to-Flutter-LEDapp.git
+    cd Figma-to-Flutter-LEDapp
    ```
 2. Get dependencies
    ```bash
