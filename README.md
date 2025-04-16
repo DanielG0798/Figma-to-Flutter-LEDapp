@@ -53,24 +53,20 @@ Methods & Variables
 
 - Use camelCase (e.g., toggleLight, onLoginPressed, roomName)
 - Use clear and descriptive names
-
+  
 ### models/
 - Contains all data models used across the app.
 - Each class should represent a core entity (e.g., User, Light, Room) and reflect the structure of the database or backend API.
-
-Examples include custom buttons, tiles, forms, or styled containers.
-
-### services/
-Handles business logic and external communications, including:
-
-- Database operations, Bluetooth connectivity, LED light controller communication etc.
-- Each service should be modular and focused on a specific concern (e.g., DatabaseService, BluetoothService)
-- Services should not contain UI logic
 
 ### screens/
 - Contains full UI screens of the app (e.g., login page, user profile page, rooms overview).
 - Each screen is usually a StatefulWidget or StatelessWidget composed of multiple widgets.
   
+### services/
+Handles business logic and external communications, including:
+- Database operations, Bluetooth connectivity, LED light controller communication etc.
+- Each service should be modular and focused on a specific concern (e.g., DatabaseService, BluetoothService)
+- Services should not contain UI logic
 ### widgets/
 Reusable UI components that are smaller than full screens.
    ```dart
@@ -84,6 +80,7 @@ Reusable UI components that are smaller than full screens.
       required this.onModify,
   });
   ```
+  Examples include custom buttons, tiles, forms, or styled containers.
   
 ### Adding new feature
 1. Create a new branch from main:
