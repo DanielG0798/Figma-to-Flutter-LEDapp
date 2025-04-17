@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "958048487004",
+    "project_id": "lightapp-6c9be",
+    "storage_bucket": "lightapp-6c9be.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:958048487004:android:562ff4832177d644df4899",
+        "android_client_info": {
+          "package_name": "com.example.hci_project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnU4fMVUdQMv4T6qshjCxHlKdD7glafuA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
