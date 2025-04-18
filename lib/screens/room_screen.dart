@@ -1,25 +1,50 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import '../models/light.dart';
 import '../widgets/light_box_widget.dart';
-import 'rooms_screen.dart';
+import '../models/light.dart';
+import '../models/room.dart';
+import '../database.dart';
+import 'package:provider/provider.dart'; // Import Provider
 
 class RoomScreen extends StatefulWidget {
-  const RoomScreen({super.key});
+  final Room room; // Receive the Room object
+
+  const RoomScreen({Key? key, required this.room}) : super(key: key);
 
   @override
   State<RoomScreen> createState() => _RoomScreenState();
 }
 
-// Underscore "_" to make private to the parent widget RoomScreen
 class _RoomScreenState extends State<RoomScreen> {
-  List<Light> lights = []; // List to store lights added
+  late AppDatabase _database;
+  List<Light> _lights = [];
+  //late Room _room;  // No longer late,  initialized in initState
+  late Room _room;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeDatabase();
+  }
+
+  Future<void> _initializeDatabase() async {
+    _database = await initializeDatabase();
+    _room = widget.room; // Initialize _room here using widget.room;
+    await _loadLights();
+  }
+
+  Future<void> _loadLights() async {
+    final database = Provider.of<AppDatabase>(context, listen: false); // Get database
+    final dbLights = await database.lightDao.getAllLights();
+    setState(() {
+      _lights = dbLights.where((dbLight) => dbLight.roomID == _room.id).toList(); //_room.id
+    });
+  }
 
   void _addLight() {
-    // Color picker is here and default color can be changed here as well
     TextEditingController nameController = TextEditingController();
     Color selectedColor = const Color.fromARGB(255, 255, 255, 255);
-    // New light and color happens here
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -33,7 +58,6 @@ class _RoomScreenState extends State<RoomScreen> {
                 decoration: const InputDecoration(labelText: 'Light name'),
               ),
               const SizedBox(height: 16),
-              // Widgeet for colorpicking
               ColorPicker(
                 pickerColor: selectedColor,
                 onColorChanged: (color) => selectedColor = color,
@@ -43,15 +67,18 @@ class _RoomScreenState extends State<RoomScreen> {
         ),
         actions: [
           TextButton(
-            onPressed: () {
+            onPressed: () async {
               if (nameController.text.isNotEmpty) {
-                // New light gets created and added to the list
-                setState(() {
-                  String hexColor = // hex color to hex string
-                      '#${selectedColor.value.toRadixString(16).substring(2)}';
-                  lights.add(Light(
-                      lightName: nameController.text, lightColor: hexColor));
-                });
+                String hexColor =
+                    '#${selectedColor.value.toRadixString(16).substring(2)}';
+                final database = Provider.of<AppDatabase>(context, listen: false); // Get database
+                final newLight = Light(
+                  lightName: nameController.text,
+                  lightColor: hexColor,
+                  roomID: _room.id, // Use _room.id
+                );
+                await database.lightDao.insertLight(newLight);
+                await _loadLights();
               }
               Navigator.of(context).pop();
             },
@@ -62,11 +89,10 @@ class _RoomScreenState extends State<RoomScreen> {
     );
   }
 
-  // Function will help modify the light color
   void _modifyLight(int index) {
     Color pickerColor =
-        Color(int.parse(lights[index].lightColor.replaceFirst('#', '0xff')));
-    // Modification of existing light happens here
+    Color(int.parse(_lights[index].lightColor.replaceFirst('#', '0xff')));
+
     showDialog(
       context: context,
       builder: (context) {
@@ -80,12 +106,25 @@ class _RoomScreenState extends State<RoomScreen> {
           ),
           actions: [
             TextButton(
-              onPressed: () {
+              onPressed: () async {
                 setState(() {
                   String hexColor =
                       '#${pickerColor.value.toRadixString(16).substring(2)}';
-                  lights[index].changeColor(hexColor);
+                  _lights[index].lightColor = hexColor;
                 });
+                final database = Provider.of<AppDatabase>(context, listen: false); // Get database
+
+                final updatedLight = Light(
+                  id: _lights[index].id,
+                  roomID: _room.id, // Use _room.id
+                  lightName: _lights[index].lightName,
+                  lightColor: _lights[index].lightColor,
+                  isOn: _lights[index].isOn,
+                  mode: _lights[index].mode,
+                );
+
+                await database.lightDao.updateLight(updatedLight);
+                await _loadLights();
                 Navigator.of(context).pop();
               },
               child: const Text('Save'),
@@ -97,36 +136,41 @@ class _RoomScreenState extends State<RoomScreen> {
   }
 
   @override
+  void dispose() {
+    _database.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final room = ModalRoute.of(context)!.settings.arguments as Room;
     final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(room.name),
+        title: Text(_room.roomName),
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: theme.colorScheme.onPrimary,
       ),
-      body: lights.isEmpty
+      body: _lights.isEmpty
           ? Center(
-              child: Text(
-                'No lights in this room yet.',
-                style: TextStyle(
-                  color: theme.colorScheme.onSurface,
-                  fontSize: 16,
-                ),
-              ),
-            )
+        child: Text(
+          'No lights in this room yet.',
+          style: TextStyle(
+            color: theme.colorScheme.onSurface,
+            fontSize: 16,
+          ),
+        ),
+      )
           : ListView.builder(
-              itemCount: lights.length,
-              itemBuilder: (context, index) {
-                return LightWidget(
-                  light: lights[index],
-                  onModify: () => _modifyLight(index),
-                );
-              },
-            ),
+        itemCount: _lights.length,
+        itemBuilder: (context, index) {
+          return LightWidget(
+            light: _lights[index],
+            onModify: () => _modifyLight(index),
+          );
+        },
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: _addLight,
         tooltip: 'Add Light',
@@ -135,3 +179,4 @@ class _RoomScreenState extends State<RoomScreen> {
     );
   }
 }
+

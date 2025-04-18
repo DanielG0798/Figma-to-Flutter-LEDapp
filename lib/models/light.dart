@@ -1,18 +1,21 @@
+import 'package:floor/floor.dart';
+
+@Entity(tableName: 'lights')
 class Light {
-  // final String address;
-  // final String roomID;
+  @PrimaryKey(autoGenerate: true)
+  final int? id; // Changed from roomID to id
   final String lightName;
   bool isOn;
-  String lightColor; // Added for color
-  String mode; // Added for mode
+  String lightColor;
+  final int? roomID; // Added roomID as a separate field
+  String mode;
 
-  // Constructor with default values
   Light({
-    // required this.address,
-    // required this.roomID,
+    this.id, // Keep the id
     required this.lightName,
     this.isOn = false,
     this.lightColor = 'white',
+    this.roomID,
     this.mode = 'normal',
   });
 
