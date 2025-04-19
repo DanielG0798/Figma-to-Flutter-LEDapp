@@ -11,11 +11,11 @@ class TutorialsScreen extends StatefulWidget {
 
 class _TutorialsScreenState extends State<TutorialsScreen> {
   // List of YouTube video IDs
-  final List<String> _videoIds = [
-    'vui4_9kqpoA',  // Never Gonna Give You Up
-    '_sSh5ui-0kI',  // Me at the zoo
-    '0eGXVbAz8n4',  // Gangnam Style
-    'oWuYuZZ5-iw',  // Despacito
+  static const _videoIds = [
+    'vui4_9kqpoA',
+    '_sSh5ui-0kI',
+    '0eGXVbAz8n4',
+    'oWuYuZZ5-iw',
   ];
 
   List<TutorialVideo> get _tutorialVideos => _videoIds.map((id) => TutorialVideo(
@@ -24,12 +24,10 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
     videoUrl: 'https://www.youtube.com/watch?v=$id',
   )).toList();
 
-  Future<void> _launchYouTubeVideo(String videoUrl) async {
-    final Uri url = Uri.parse(videoUrl);
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url, mode: LaunchMode.externalApplication);
-    } else {
-      throw 'Could not launch $videoUrl';
+  Future<void> _launchVideo(String url) async {
+    final uri = Uri.parse(url);
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      throw 'Could not launch $url';
     }
   }
 
@@ -49,59 +47,73 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
         itemCount: _tutorialVideos.length,
         itemBuilder: (context, index) {
           final video = _tutorialVideos[index];
-          return Card(
-            margin: const EdgeInsets.only(bottom: 16),
-            child: InkWell(
-              onTap: () => _launchYouTubeVideo(video.videoUrl),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  AspectRatio(
-                    aspectRatio: 16 / 9,
-                    child: Image.network(
-                      video.thumbnailUrl,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          color: theme.colorScheme.surfaceVariant,
-                          child: const Center(
-                            child: Icon(Icons.error_outline),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: FutureBuilder<String>(
-                      future: video.title,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return SizedBox(
-                            height: 32,
-                            child: Center(
-                              child: SizedBox(
-                                width: 24,
-                                height: 24,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
-                              ),
-                            ),
-                          );
-                        }
-                        return Text(
-                          snapshot.data ?? 'Loading...',
-                          style: theme.textTheme.titleLarge,
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
+          return _VideoCard(
+            video: video,
+            onTap: () => _launchVideo(video.videoUrl),
           );
         },
+      ),
+    );
+  }
+}
+
+class _VideoCard extends StatelessWidget {
+  final TutorialVideo video;
+  final VoidCallback onTap;
+
+  const _VideoCard({
+    required this.video,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
+    return Card(
+      margin: const EdgeInsets.only(bottom: 16),
+      child: InkWell(
+        onTap: onTap,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AspectRatio(
+              aspectRatio: 16 / 9,
+              child: Image.network(
+                video.thumbnailUrl,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => Container(
+                  color: theme.colorScheme.surfaceVariant,
+                  child: const Center(child: Icon(Icons.error_outline)),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: FutureBuilder<String>(
+                future: video.title,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const SizedBox(
+                      height: 32,
+                      child: Center(
+                        child: SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      ),
+                    );
+                  }
+                  return Text(
+                    snapshot.data ?? 'Loading...',
+                    style: theme.textTheme.titleLarge,
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
