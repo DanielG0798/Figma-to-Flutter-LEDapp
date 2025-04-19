@@ -18,18 +18,17 @@ class RoomScreen extends StatefulWidget {
 class _RoomScreenState extends State<RoomScreen> {
   late AppDatabase _database;
   List<Light> _lights = [];
-  //late Room _room;  // No longer late,  initialized in initState
-  late Room _room;
+  late final Room _room;  // Mark as late final since it's initialized in initState
 
   @override
   void initState() {
     super.initState();
+    _room = widget.room;  // Initialize immediately
     _initializeDatabase();
   }
 
   Future<void> _initializeDatabase() async {
     _database = await initializeDatabase();
-    _room = widget.room; // Initialize _room here using widget.room;
     await _loadLights();
   }
 
@@ -137,7 +136,6 @@ class _RoomScreenState extends State<RoomScreen> {
 
   @override
   void dispose() {
-    _database.close();
     super.dispose();
   }
 
