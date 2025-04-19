@@ -79,7 +79,6 @@ class _RoomsScreenState extends State<RoomsScreen> {
   @override
   void dispose() {
     _roomNameController.dispose();
-    //  Removed  _database.close();  The database should be closed in main.dart or a central place.
     super.dispose();
   }
 
