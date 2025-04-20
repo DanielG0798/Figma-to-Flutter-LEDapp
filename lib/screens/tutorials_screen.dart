@@ -83,7 +83,7 @@ class _VideoCard extends StatelessWidget {
                 video.thumbnailUrl,
                 fit: BoxFit.cover,
                 errorBuilder: (_, __, ___) => Container(
-                  color: theme.colorScheme.surfaceVariant,
+                  color: theme.colorScheme.surfaceContainerHighest,
                   child: const Center(child: Icon(Icons.error_outline)),
                 ),
               ),

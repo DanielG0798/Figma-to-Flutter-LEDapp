@@ -2,18 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class LEDColorPicker extends StatefulWidget {
-  const LEDColorPicker({super.key});
+  final Color initialColor;
+  final ValueChanged<Color> onColorChanged;
+  const LEDColorPicker({
+    super.key,
+    required this.initialColor,
+    required this.onColorChanged,
+  });
 
   @override
   LEDColorPickerState createState() => LEDColorPickerState();
 }
 
 class LEDColorPickerState extends State<LEDColorPicker> {
-  Color pickerColor = Color.fromARGB(255, 255, 255, 255);
-  Color currentColor = Color.fromARGB(255, 255, 255, 255);
+  late Color pickerColor;
+
+  @override
+  void initState() {
+    super.initState();
+    pickerColor = widget.initialColor;
+  }
 
   void changeColor(Color color) {
-    setState(() => pickerColor = color);
+    setState(() {
+      pickerColor = color;
+    });
   }
 
   void showColorPicker() {
@@ -32,8 +45,7 @@ class LEDColorPickerState extends State<LEDColorPicker> {
             ElevatedButton(
               child: const Text('Got it'),
               onPressed: () {
-                setState(() => currentColor = pickerColor);
-                // ToDo: Send the selected color to the LED controller here
+                widget.onColorChanged(pickerColor);
                 Navigator.of(context).pop();
               },
             ),
@@ -56,7 +68,7 @@ class LEDColorPickerState extends State<LEDColorPicker> {
             Container(
               width: 100,
               height: 100,
-              color: currentColor,
+              color: pickerColor,
             ),
             SizedBox(height: 20),
             ElevatedButton(
