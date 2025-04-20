@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_switch/flutter_switch.dart';
 import '../models/light.dart';
 
 class LightWidget extends StatelessWidget {
   final Light light;
   final VoidCallback onModify;
+  final ValueChanged<bool> onToggle;
 
   const LightWidget({
     super.key,
     required this.light,
     required this.onModify,
+    required this.onToggle,
   });
-
   // Convert hex color string to Flutter Color
   Color _parseColor(String colorStr) {
     try {
       return Color(int.parse(colorStr.replaceFirst('#', '0xff')));
     } catch (_) {
-      return const Color.fromARGB(
-          255, 22, 5, 5); // fallback if color string is invalid
+      return const Color.fromARGB(255, 22, 5, 5);
     }
   }
 
@@ -38,6 +39,22 @@ class LightWidget extends StatelessWidget {
               ),
             ),
 
+            FlutterSwitch(
+              value: light.isOn,
+              onToggle: onToggle,
+              valueFontSize: 16,
+              activeColor: Colors.green,
+              inactiveColor: Colors.grey,
+              width: 55.0,
+              height: 27.0,
+              toggleSize: 16.0,
+              borderRadius: 30.0,
+              padding: 3.0,
+              showOnOff: true,
+            ),
+
+            const SizedBox(width: 32), // spacing
+
             // Color circle
             GestureDetector(
               onTap: onModify,
@@ -52,7 +69,7 @@ class LightWidget extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(width: 16),
+            const SizedBox(width: 16), // spacing
 
             // Modify button with gear icon above
             Material(

@@ -1,15 +1,16 @@
+import 'package:floor/floor.dart';
 import '../models/light.dart';
 
+@Entity(tableName: 'rooms')
 class Room {
+  @PrimaryKey(autoGenerate: true)
+  final int? id;
   final String roomID;
   final String roomName;
-  final List<Light> lights;
 
   Room({
+    this.id,
     required this.roomID,
     required this.roomName,
-    List<Light>? lights,
-  }) : lights =
-            lights ?? []; // If the passed-in lights value is not null, use it.
-  //But if it's null, then use an empty list [] instead.
+  });
 }
