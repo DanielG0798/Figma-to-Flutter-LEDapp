@@ -5,10 +5,10 @@ class Light {
   @PrimaryKey(autoGenerate: true)
   final int? id; // Changed from roomID to id
   final String lightName;
-  bool isOn;
-  String lightColor;
+  final bool isOn;
+  final String lightColor;
   final int? roomID; // Added roomID as a separate field
-  String mode;
+  final String mode;
 
   Light({
     this.id, // Keep the id
@@ -19,18 +19,21 @@ class Light {
     this.mode = 'normal',
   });
 
-  // Method to toggle light state
-  void toggle() {
-    isOn = !isOn;
-  }
-
-  // Method to change light color
-  void changeColor(String newColor) {
-    lightColor = newColor;
-  }
-
-  // Method to change light mode
-  void changeMode(String newMode) {
-    mode = newMode;
+  Light copyWith({
+    int? id,
+    String? lightName,
+    bool? isOn,
+    String? lightColor,
+    int? roomID,
+    String? mode,
+  }) {
+    return Light(
+      id: id ?? this.id,
+      lightName: lightName ?? this.lightName,
+      isOn: isOn ?? this.isOn,
+      lightColor: lightColor ?? this.lightColor,
+      roomID: roomID ?? this.roomID,
+      mode: mode ?? this.mode,
+    );
   }
 }
