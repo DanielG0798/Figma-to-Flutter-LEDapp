@@ -1,7 +1,7 @@
 class Light {
   // final String address;
   // final String roomID;
-  final String lightName;
+  String lightName;
   bool isOn;
   String lightColor; // Added for color
   String mode; // Added for mode

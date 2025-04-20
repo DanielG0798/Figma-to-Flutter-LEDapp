@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
-
+import '../models/light.dart';
+import '../models/room.dart';
 // Simple model for a room
+/*
 class Room {
   final String id;
-  final String name;
+  String name;
+  List<Light> lightDevices;
 
-  Room({required this.id, required this.name});
+  Room({required this.id, required this.name, this.lightDevices = const []});
 }
 
+*/
 class RoomsScreen extends StatefulWidget {
   const RoomsScreen({super.key});
 
@@ -55,6 +59,59 @@ class _RoomsScreenState extends State<RoomsScreen> {
                 }
               },
               child: const Text('Add'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _removeRoom(String roomId)
+  {
+    setState(() {
+      _rooms.removeWhere((room) => room.id == roomId);
+    });
+  }
+
+  void _renameRoom(String roomId)
+  {
+    // To find the room by ID
+    final room = _rooms.firstWhere((r) => r.id == roomId);
+    // Filling with current name
+    final nameController = TextEditingController(text: room.name);
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Rename Room'),
+          content: TextField(
+            controller: nameController,
+            decoration: const InputDecoration(
+              labelText: 'Room Name',
+              hintText: 'Enter a new name...',
+            ),
+            autofocus: true,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                final newName = nameController.text.trim();
+                if(newName.isNotEmpty && newName != room.name) {
+                  setState(() {
+                    room.name = newName;
+                  });
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('${room.name} renamed to $newName')),
+                  );
+                }
+              },
+              child: const Text('Rename'),
             ),
           ],
         );
@@ -115,7 +172,26 @@ class _RoomsScreenState extends State<RoomsScreen> {
                 itemCount: _rooms.length,
                 itemBuilder: (context, index) {
                   final room = _rooms[index];
-                  return Card(
+
+
+                  return Dismissible(
+
+                    // To delete the room
+                    key: Key(room.id), // key to identify dismissible
+                    direction: DismissDirection.endToStart, // to enable the Swipe Direction
+                    background: Container(
+                      color: Colors.red,
+                      alignment: Alignment.centerRight,
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: const Icon(Icons.delete, color: Colors.white),
+                    ),
+                    onDismissed: (direction) {
+                      _removeRoom(room.id); // Removing room from the List
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('${room.name} deleted')),
+                      );
+                  },
+                  child: Card(
                     margin: const EdgeInsets.symmetric(vertical: 8.0),
                     color: theme.colorScheme.surface,
                     child: InkWell(
@@ -146,6 +222,18 @@ class _RoomsScreenState extends State<RoomsScreen> {
                                 ),
                               ),
                             ),
+
+                            // Icon to rename the the room
+                            IconButton(
+                              icon: Icon(
+                                Icons.edit,
+                                color: theme.colorScheme.primary,
+                              ),
+                              onPressed: () {
+                                _renameRoom(room.id); // To open the rename dialogue
+                              },
+                            ),
+
                             Icon(
                               Icons.chevron_right,
                               color: theme.colorScheme.primary,
@@ -154,8 +242,9 @@ class _RoomsScreenState extends State<RoomsScreen> {
                         ),
                       ),
                     ),
-                  );
-                },
+                  ),
+                 );
+                }
               ),
             ),
     );

@@ -1,15 +1,20 @@
 import '../models/light.dart';
 
 class Room {
-  final String roomID;
-  final String roomName;
-  final List<Light> lights;
+  final String id;
+  String name;
+  List<Light> lightDevices;
+  String? colorHex;
 
   Room({
-    required this.roomID,
-    required this.roomName,
-    List<Light>? lights,
-  }) : lights =
-            lights ?? []; // If the passed-in lights value is not null, use it.
+    required this.id,
+    required this.name,
+    //this.lightDevices = const [],
+    this.colorHex,
+
+    List<Light>? lightsDevices,
+  })
+   : lightDevices =
+            lightsDevices ?? []; // If the passed-in lightsDevices value is not null, use it.
   //But if it's null, then use an empty list [] instead.
 }

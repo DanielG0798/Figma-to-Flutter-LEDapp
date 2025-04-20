@@ -1,0 +1,2 @@
+C:/Users/bauti/HCIAppProject/Figma-to-Flutter-LEDapp_4_17_25/android/app/.cxx/Debug/68p341n4/x86/CMakeFiles/edit_cache.dir
+C:/Users/bauti/HCIAppProject/Figma-to-Flutter-LEDapp_4_17_25/android/app/.cxx/Debug/68p341n4/x86/CMakeFiles/rebuild_cache.dir

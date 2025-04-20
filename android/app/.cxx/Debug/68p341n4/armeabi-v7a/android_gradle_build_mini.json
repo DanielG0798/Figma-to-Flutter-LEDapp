@@ -1,0 +1,20 @@
+{
+  "buildFiles": [
+    "C:\\Users\\bauti\\Flutter\\Flutter_Windows\\flutter\\packages\\flutter_tools\\gradle\\src\\main\\groovy\\CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "C:\\Users\\bauti\\AppData\\Local\\Android\\sdk\\cmake\\3.22.1\\bin\\ninja.exe",
+      "-C",
+      "C:\\Users\\bauti\\HCIAppProject\\Figma-to-Flutter-LEDapp_4_17_25\\android\\app\\.cxx\\Debug\\68p341n4\\armeabi-v7a",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "C:\\Users\\bauti\\AppData\\Local\\Android\\sdk\\cmake\\3.22.1\\bin\\ninja.exe",
+    "-C",
+    "C:\\Users\\bauti\\HCIAppProject\\Figma-to-Flutter-LEDapp_4_17_25\\android\\app\\.cxx\\Debug\\68p341n4\\armeabi-v7a",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {}
+}
