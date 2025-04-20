@@ -93,12 +93,12 @@ class _RoomScreenState extends State<RoomScreen> {
     );
   }
 
-void _toggleLight(int index, bool newState) async {
-  final database = Provider.of<AppDatabase>(context, listen: false);
-  final updatedLight = _lights[index].copyWith(isOn: newState);
-  await database.lightDao.updateLight(updatedLight);
-  await _loadLights();
-}
+  void _toggleLight(int index, bool newState) async {
+    final database = Provider.of<AppDatabase>(context, listen: false);
+    final updatedLight = _lights[index].copyWith(isOn: newState);
+    await database.lightDao.updateLight(updatedLight);
+    await _loadLights();
+  }
 
 // Function will help modify the light color
   void _modifyLight(int index) {
@@ -122,7 +122,8 @@ void _toggleLight(int index, bool newState) async {
                 setState(() {
                   String hexColor =
                       '#${pickerColor.value.toRadixString(16).substring(2)}';
-                final updateLight = _lights[index].copyWith(lightColor: hexColor);
+                  final updateLight =
+                      _lights[index].copyWith(lightColor: hexColor);
                 });
                 final database = Provider.of<AppDatabase>(context,
                     listen: false); // Get database

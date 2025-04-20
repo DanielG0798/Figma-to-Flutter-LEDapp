@@ -20,20 +20,20 @@ class Light {
   });
 
   Light copyWith({
-    int? id,
-    String? lightName,
-    bool? isOn,
-    String? lightColor,
-    int? roomID,
-    String? mode,
-  }) {
-    return Light(
-      id: id ?? this.id,
-      lightName: lightName ?? this.lightName,
-      isOn: isOn ?? this.isOn,
-      lightColor: lightColor ?? this.lightColor,
-      roomID: roomID ?? this.roomID,
-      mode: mode ?? this.mode,
-    );
-  }
+  int? id,
+  String? lightName,
+  bool? isOn,
+  String? lightColor,
+  int? roomID,
+  String? mode,
+}) {
+  return Light(
+    id: id ?? this.id,
+    lightName: lightName ?? this.lightName,
+    isOn: isOn ?? this.isOn,
+    lightColor: lightColor ?? this.lightColor,
+    roomID: roomID ?? this.roomID,
+    mode: mode ?? this.mode,
+  );
+}
 }
