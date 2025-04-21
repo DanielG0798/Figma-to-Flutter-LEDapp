@@ -92,13 +92,6 @@ class _RoomsScreenState extends State<RoomsScreen> {
         title: const Text('Rooms'),
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: theme.colorScheme.onPrimary,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: _addRoom,
-            tooltip: 'Add new room',
-          ),
-        ],
       ),
       body: _rooms.isEmpty
           ? Center(
@@ -176,6 +169,15 @@ class _RoomsScreenState extends State<RoomsScreen> {
               ),
             );
           },
+        ),
+      ),
+      floatingActionButton: SizedBox(
+        width: 80,
+        height: 80,
+        child: FloatingActionButton(
+          onPressed: _addRoom,
+          tooltip: 'Add Room',
+          child: const Icon(Icons.add, size: 40),
         ),
       ),
     );

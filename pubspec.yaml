@@ -45,6 +45,9 @@ dependencies:
   url_launcher: ^6.2.5
   http: ^1.2.0
   youtube_explode_dart: ^2.1.0
+  image_picker: ^1.0.7
+  path_provider: ^2.1.2
+  path: ^1.8.3
 
 dev_dependencies:
   flutter_test:
