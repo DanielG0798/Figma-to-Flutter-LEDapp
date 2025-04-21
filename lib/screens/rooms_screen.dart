@@ -96,6 +96,7 @@ class _RoomsScreenState extends State<RoomsScreen> {
       body: _rooms.isEmpty
           ? Center(
         child: Column(
+          
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
@@ -114,9 +115,10 @@ class _RoomsScreenState extends State<RoomsScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Use the + in top right to add rooms',
+              'Use the + in bottom right to add rooms',
               style: TextStyle(
                 color: theme.colorScheme.primary.withOpacity(0.7),
+                fontSize: 18
               ),
             ),
           ],
