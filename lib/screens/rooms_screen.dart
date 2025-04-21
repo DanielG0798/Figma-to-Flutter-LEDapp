@@ -180,6 +180,15 @@ class _RoomsScreenState extends State<RoomsScreen> {
           },
         ),
       ),
+      floatingActionButton: SizedBox(
+        width: 80,
+        height: 80,
+        child: FloatingActionButton(
+          onPressed: _addRoom,
+          tooltip: 'Add Room',
+          child: const Icon(Icons.add, size: 40),
+        ),
+      ),
     );
   }
 }

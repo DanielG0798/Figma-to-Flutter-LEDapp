@@ -3,25 +3,152 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../database.dart';
 import '../models/user.dart'; // Import your Floor User model
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
 
 class AuthService extends ChangeNotifier {
   final firebase_auth.FirebaseAuth auth = firebase_auth.FirebaseAuth.instance;
   firebase_auth.User? _user;
+  String? _profilePicturePath;
 
   AuthService() {
     // Listen to auth state changes
-    auth.authStateChanges().listen((firebase_auth.User? user) { // Use the prefix here
+    auth.authStateChanges().listen((firebase_auth.User? user) {
       _user = user;
+      _loadProfilePicture();
       notifyListeners();
     });
   }
 
-  firebase_auth.User? get currentUser => _user; // Use the prefix here
+  firebase_auth.User? get currentUser => _user;
 
   bool get isLoggedIn => _user != null;
 
+  String? get profilePicturePath => _profilePicturePath;
+
+  Future<void> _loadProfilePicture() async {
+    if (_user != null) {
+      try {
+        final directory = await getApplicationDocumentsDirectory();
+        final userDir = Directory('${directory.path}/user_${_user!.uid}');
+        if (await userDir.exists()) {
+          final files = userDir.listSync();
+          if (files.isNotEmpty) {
+            _profilePicturePath = files.first.path;
+            notifyListeners();
+          } else {
+            _profilePicturePath = null;
+            notifyListeners();
+          }
+        } else {
+          _profilePicturePath = null;
+          notifyListeners();
+        }
+      } catch (e) {
+        print('Error loading profile picture: $e');
+        _profilePicturePath = null;
+        notifyListeners();
+      }
+    } else {
+      _profilePicturePath = null;
+      notifyListeners();
+    }
+  }
+
+  Future<String?> updateProfilePicture(String imagePath) async {
+    if (_user != null) {
+      try {
+        final directory = await getApplicationDocumentsDirectory();
+        final userDir = Directory('${directory.path}/user_${_user!.uid}');
+        
+        // Create user directory if it doesn't exist
+        if (!await userDir.exists()) {
+          await userDir.create(recursive: true);
+        }
+
+        // Delete all existing files in the user directory
+        if (await userDir.exists()) {
+          await for (final file in userDir.list()) {
+            if (file is File) {
+              await file.delete();
+            }
+          }
+        }
+
+        // Copy new image to user directory
+        final fileName = 'profile_picture${path.extension(imagePath)}';
+        final newPath = path.join(userDir.path, fileName);
+        
+        // Ensure the source file exists and is readable
+        final sourceFile = File(imagePath);
+        if (!await sourceFile.exists()) {
+          throw Exception('Source image file does not exist');
+        }
+
+        // Copy the file
+        await sourceFile.copy(newPath);
+        
+        // Verify the copy was successful
+        final newFile = File(newPath);
+        if (!await newFile.exists()) {
+          throw Exception('Failed to save profile picture');
+        }
+
+        return newPath;
+      } catch (e) {
+        print('Error updating profile picture: $e');
+        rethrow;
+      }
+    }
+    return null;
+  }
+
   Future<void> signOut() async {
     await auth.signOut();
+  }
+
+  Future<void> changePassword(String newPassword) async {
+    try {
+      if (_user != null) {
+        await _user!.updatePassword(newPassword);
+        notifyListeners();
+      } else {
+        throw Exception('No user logged in');
+      }
+    } catch (e) {
+      print('Error changing password: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> changeEmail(String newEmail) async {
+    try {
+      if (_user != null) {
+        await _user!.verifyBeforeUpdateEmail(newEmail);
+        notifyListeners();
+      } else {
+        throw Exception('No user logged in');
+      }
+    } catch (e) {
+      print('Error changing email: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> deleteAccount() async {
+    try {
+      if (_user != null) {
+        await _user!.delete();
+        _user = null;
+        notifyListeners();
+      } else {
+        throw Exception('No user logged in');
+      }
+    } catch (e) {
+      print('Error deleting account: $e');
+      rethrow;
+    }
   }
 
   // New function: handle user sign-up
