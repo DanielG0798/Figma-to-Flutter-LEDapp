@@ -31,7 +31,9 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     
     return Scaffold(
       body: _pages[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: SizedBox(
+        height: 120,
+      child: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -46,11 +48,15 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
             label: 'Profile',
           ),
         ],
+        iconSize: 35,
+        selectedFontSize: 18,
+        unselectedFontSize: 16,
         currentIndex: _selectedIndex,
         selectedItemColor: theme.colorScheme.onPrimary,
         unselectedItemColor: theme.colorScheme.onPrimary.withOpacity(0.6),
         backgroundColor: theme.colorScheme.primary,
         onTap: _onItemTapped,
+        ),
       ),
     );
   }

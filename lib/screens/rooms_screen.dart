@@ -94,7 +94,7 @@ class _RoomsScreenState extends State<RoomsScreen> {
         foregroundColor: theme.colorScheme.onPrimary,
         actions: [
           IconButton(
-            icon: const Icon(Icons.add),
+            icon: const Icon(Icons.add, size: 34,),
             onPressed: _addRoom,
             tooltip: 'Add new room',
           ),
@@ -103,6 +103,7 @@ class _RoomsScreenState extends State<RoomsScreen> {
       body: _rooms.isEmpty
           ? Center(
         child: Column(
+          
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
@@ -124,6 +125,7 @@ class _RoomsScreenState extends State<RoomsScreen> {
               'Use the + in top right to add rooms',
               style: TextStyle(
                 color: theme.colorScheme.primary.withOpacity(0.7),
+                fontSize: 18
               ),
             ),
           ],

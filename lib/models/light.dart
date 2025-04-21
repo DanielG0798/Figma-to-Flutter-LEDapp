@@ -8,7 +8,7 @@ class Light {
   final bool isOn;
   final String lightColor;
   final int? roomID; // Added roomID as a separate field
-  final String mode;
+  final double brightness;
 
   Light({
     this.id, // Keep the id
@@ -16,24 +16,24 @@ class Light {
     this.isOn = false,
     this.lightColor = 'white',
     this.roomID,
-    this.mode = 'normal',
+    this.brightness = 50,
   });
 
   Light copyWith({
-  int? id,
-  String? lightName,
-  bool? isOn,
-  String? lightColor,
-  int? roomID,
-  String? mode,
-}) {
-  return Light(
-    id: id ?? this.id,
-    lightName: lightName ?? this.lightName,
-    isOn: isOn ?? this.isOn,
-    lightColor: lightColor ?? this.lightColor,
-    roomID: roomID ?? this.roomID,
-    mode: mode ?? this.mode,
-  );
-}
+    int? id,
+    String? lightName,
+    bool? isOn,
+    String? lightColor,
+    int? roomID,
+    double? brightness,
+  }) {
+    return Light(
+      id: id ?? this.id,
+      lightName: lightName ?? this.lightName,
+      isOn: isOn ?? this.isOn,
+      lightColor: lightColor ?? this.lightColor,
+      roomID: roomID ?? this.roomID,
+      brightness: brightness ?? this.brightness,
+    );
+  }
 }

@@ -6,12 +6,14 @@ class LightWidget extends StatelessWidget {
   final Light light;
   final VoidCallback onModify;
   final ValueChanged<bool> onToggle;
+  final VoidCallback onDelete;
 
   const LightWidget({
     super.key,
     required this.light,
     required this.onModify,
     required this.onToggle,
+    required this.onDelete,
   });
   // Convert hex color string to Flutter Color
   Color _parseColor(String colorStr) {
@@ -26,6 +28,7 @@ class LightWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      elevation: 5.0,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Row(
@@ -53,25 +56,8 @@ class LightWidget extends StatelessWidget {
               showOnOff: true,
             ),
 
-            const SizedBox(width: 32), // spacing
-
-            // Color circle
-            GestureDetector(
-              onTap: onModify,
-              child: Container(
-                width: 30,
-                height: 30,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: _parseColor(light.lightColor),
-                  border: Border.all(color: Colors.black12),
-                ),
-              ),
-            ),
-
-            const SizedBox(width: 16), // spacing
-
-            // Modify button with gear icon above
+            const SizedBox(width: 15), // spacing
+            // Modify button with sample color circle
             Material(
               color: Colors.transparent,
               child: InkWell(
@@ -82,17 +68,31 @@ class LightWidget extends StatelessWidget {
                   padding: const EdgeInsets.all(8.0), // Tappable area
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
-                    children: const [
-                      Icon(Icons.settings, size: 20),
-                      Text('Modify'),
+                    children: [
+                      Container(
+                        width: 20,
+                        height: 20,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: _parseColor(light.lightColor),
+                          border: Border.all(color: Colors.black12),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      const Text('Modify'),
                     ],
                   ),
                 ),
               ),
-            )
-          ],
+            ),
+            // Add Delete Button (Trash Icon)
+            IconButton(
+              icon: const Icon(Icons.delete, color: Colors.red), // Delete icon
+              onPressed: onDelete, // Call the onDelete callback
+              ),
+            ],
+          ),
         ),
-      ),
-    );
+      );
   }
 }

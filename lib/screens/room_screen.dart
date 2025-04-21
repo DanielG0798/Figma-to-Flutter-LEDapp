@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import '../widgets/light_box_widget.dart';
 import '../models/light.dart';
 import '../models/room.dart';
 import '../database.dart';
-import 'package:provider/provider.dart'; // Import Provider
+import 'package:provider/provider.dart';
+import '../widgets/color_and_brightness.dart';
+import '../widgets/color_picker.dart';
 
 class RoomScreen extends StatefulWidget {
-  final Room room; // Receive the Room object
+  final Room room;
 
   const RoomScreen({super.key, required this.room});
 
@@ -18,13 +19,12 @@ class RoomScreen extends StatefulWidget {
 class _RoomScreenState extends State<RoomScreen> {
   late AppDatabase _database;
   List<Light> _lights = [];
-  late final Room
-      _room; // Mark as late final since it's initialized in initState
+  late final Room _room;
 
   @override
   void initState() {
     super.initState();
-    _room = widget.room; // Initialize immediately
+    _room = widget.room;
     _initializeDatabase();
   }
 
@@ -34,63 +34,135 @@ class _RoomScreenState extends State<RoomScreen> {
   }
 
   Future<void> _loadLights() async {
-    final database =
-        Provider.of<AppDatabase>(context, listen: false); // Get database
-    final dbLights = await database.lightDao.getAllLights();
+    final database = Provider.of<AppDatabase>(context, listen: false);
+    final databaseLights = await database.lightDao.getAllLights();
     setState(() {
-      _lights = dbLights
-          .where((dbLight) => dbLight.roomID == _room.id)
-          .toList(); //_room.id
+      _lights = databaseLights
+          .where((databaseLight) => databaseLight.roomID == _room.id)
+          .toList();
     });
   }
 
-  void _addLight() {
-    TextEditingController nameController = TextEditingController();
-    Color selectedColor = const Color.fromARGB(255, 255, 255, 255);
+  void _renameLight(BuildContext context,
+      {required String initialName, required void Function(String) onRenamed}) {
+    final TextEditingController controller =
+        TextEditingController(text: initialName);
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Add New Light'),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nameController,
-                decoration: const InputDecoration(labelText: 'Light name'),
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Rename Light'),
+          content: TextField(
+            controller: controller,
+            decoration: const InputDecoration(hintText: 'Enter new name'),
+          ),
+          actions: [
+              TextButton(
+              onPressed: () {
+                final newName = controller.text.trim();
+                if (newName.isNotEmpty) {
+                  onRenamed(newName);
+                }
+                Navigator.of(context).pop();
+              },
+              child: const Text('Save',style: TextStyle(fontSize: 18),),
+            ),
+              SizedBox(width: 90),
+            TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Cancel',style: TextStyle(fontSize: 18),),
               ),
-              const SizedBox(height: 16),
-              ColorPicker(
-                pickerColor: selectedColor,
-                onColorChanged: (color) => selectedColor = color,
+          ],
+        );
+      },
+    );
+  }
+
+  void _addLight() {
+    Color selectedColor = const Color(0xFFFFFFFF);
+    double brightnessSelection = 75;
+    TextEditingController nameController = TextEditingController();
+
+    showDialog(
+    context: context,
+    builder: (context) {
+      return StatefulBuilder(
+        builder: (context, setStateDialog) {
+          return AlertDialog(
+            title: const Center(
+              child: Text(
+                'Add New Light',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: nameController,
+                    decoration: const InputDecoration(labelText: 'Light name'),
+                  ),
+                  const SizedBox(height: 16),
+                  buildColorAndBrightnessPicker(
+                    pickerColor: selectedColor,
+                    brightness: brightnessSelection,
+                    onColorChanged: (color) {
+                      setStateDialog(() => selectedColor = color);
+                    },
+                    onBrightnessChanged: (val) {
+                      setStateDialog(() => brightnessSelection = val);
+
+                    
+                    },
+                  ),
+                ],
+              ),
+            ),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TextButton(
+                onPressed: () async {
+                  if (nameController.text.isNotEmpty) {
+                    final hexColor = '#${selectedColor.value.toRadixString(16).substring(2)}';
+                    final database = Provider.of<AppDatabase>(context, listen: false);
+                    final newLight = Light(
+                      lightName: nameController.text,
+                      lightColor: hexColor,
+                      roomID: _room.id,
+                      brightness: brightnessSelection,
+                    );
+                    await database.lightDao.insertLight(newLight);
+                    await _loadLights();
+                    Navigator.of(context).pop();
+                  }
+                },
+                child: const Text('Add', style: TextStyle(fontSize: 19)),
+                ),
+                TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text('Cancel', style: TextStyle(fontSize: 19)),
+                  ),
+                ],
               ),
             ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () async {
-              if (nameController.text.isNotEmpty) {
-                String hexColor =
-                    '#${selectedColor.value.toRadixString(16).substring(2)}';
-                final database = Provider.of<AppDatabase>(context,
-                    listen: false); // Get database
-                final newLight = Light(
-                  lightName: nameController.text,
-                  lightColor: hexColor,
-                  roomID: _room.id, // Use _room.id
-                );
-                await database.lightDao.insertLight(newLight);
-                await _loadLights();
-              }
-              Navigator.of(context).pop();
-            },
-            child: const Text('Add'),
-          ),
-        ],
-      ),
-    );
+          );
+        },
+      );
+    },
+  );
+}    
+  void _deleteLight(int index) async {
+    final database = Provider.of<AppDatabase>(context, listen: false);
+    await database.lightDao.deleteLight(_lights[index]);
+    await _loadLights();
   }
 
   void _toggleLight(int index, bool newState) async {
@@ -100,50 +172,104 @@ class _RoomScreenState extends State<RoomScreen> {
     await _loadLights();
   }
 
-// Function will help modify the light color
   void _modifyLight(int index) {
-  Color pickerColor = Color(int.parse(_lights[index].lightColor.replaceFirst('#', '0xff')));
+    Color pickerColor =
+        Color(int.parse(_lights[index].lightColor.replaceFirst('#', '0xff')));
+    String tempName = _lights[index].lightName;
+    double brightnessSelection = _lights[index].brightness ?? 50;
 
-  showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: const Text('Pick a color'),
-        content: SingleChildScrollView(
-          child: ColorPicker(
-            pickerColor: pickerColor,
-            onColorChanged: (color) => pickerColor = color,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () async {
-              final String hexColor = '#${pickerColor.value.toRadixString(16).substring(2)}';
+    Color adjustedColor(Color color, double brightnessSelect) {
+      final hsl = HSLColor.fromColor(color);
+      final lightness = (brightnessSelection / 100).clamp(0.0, 1.0);
+      return hsl.withLightness(lightness).toColor();
+    }
 
-              // Use copyWith to create a new light with the updated color
-              final updatedLight = _lights[index].copyWith(lightColor: hexColor);
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setStateDialog) {
+            return AlertDialog(
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      tempName,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      _renameLight(
+                        context,
+                        initialName: tempName,
+                        onRenamed: (newName) {
+                          setStateDialog(() {
+                            tempName = newName;
+                          });
+                        },
+                      );
+                    },
+                    child: const Text(
+                      'Rename',
+                      style: TextStyle(fontSize: 18),
+                    ),
+                  )
+                ],
+              ),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                    children: [
+                    buildColorAndBrightnessPicker(
+                      pickerColor: pickerColor,
+                      brightness: brightnessSelection,
+                      onColorChanged: (color) {
+                        setStateDialog(() => pickerColor = color);
+                      },
+                      onBrightnessChanged: (val) {
+                        setStateDialog(() => brightnessSelection = val);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () async {
+                    final String hexColor =
+                        '#${pickerColor.value.toRadixString(16).substring(2)}';
 
-              final database = Provider.of<AppDatabase>(context, listen: false);
-              await database.lightDao.updateLight(updatedLight);
+                    final updatedLight = _lights[index].copyWith(
+                      lightColor: hexColor,
+                      lightName: tempName,
+                      brightness: brightnessSelection,
+                    );
 
-              setState(() {
-                _lights[index] = updatedLight; // Update the in-memory list
-              });
+                    final database =
+                        Provider.of<AppDatabase>(context, listen: false);
+                    await database.lightDao.updateLight(updatedLight);
 
-              Navigator.of(context).pop();
-            },
-            child: const Text('Save'),
-          )
-        ],
-      );
-    },
-  );
-}
-
-
-  @override
-  void dispose() {
-    super.dispose();
+                    setState(() {
+                      _lights[index] = updatedLight;
+                    });
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Save', style: TextStyle(fontSize: 19)),
+                ),
+                SizedBox(width: 130),
+                TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text('Cancel', style: TextStyle(fontSize: 19)),
+                  ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -157,7 +283,6 @@ class _RoomScreenState extends State<RoomScreen> {
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: theme.colorScheme.onPrimary,
       ),
-      // Default message
       body: _lights.isEmpty
           ? Center(
               child: RichText(
@@ -167,7 +292,7 @@ class _RoomScreenState extends State<RoomScreen> {
                     fontSize: 16,
                   ),
                   children: [
-                    const TextSpan(text: 'Press '),
+                    const TextSpan(text: 'Press ', style: TextStyle(fontSize: 18)),
                     WidgetSpan(
                       alignment: PlaceholderAlignment.middle,
                       child: Container(
@@ -180,12 +305,12 @@ class _RoomScreenState extends State<RoomScreen> {
                             color: const Color.fromARGB(255, 209, 228, 255)),
                         child: Icon(
                           Icons.bluetooth,
-                          size: 20,
+                          size: 25,
                           color: theme.colorScheme.onSurface,
                         ),
                       ),
                     ),
-                    const TextSpan(text: ' to add a new light.'),
+                    const TextSpan(text: ' to add a new light.', style: TextStyle(fontSize: 18)),
                   ],
                 ),
               ),
@@ -197,18 +322,22 @@ class _RoomScreenState extends State<RoomScreen> {
                   light: _lights[index],
                   onModify: () => _modifyLight(index),
                   onToggle: (newState) => _toggleLight(index, newState),
+                  onDelete: () => _deleteLight(index),
                 );
               },
             ),
-      // Bluetooth button
-      floatingActionButton: SizedBox(
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(right: 20.0),
+        child: SizedBox(
           width: 80,
           height: 80,
           child: FloatingActionButton(
             onPressed: _addLight,
             tooltip: 'Add Light',
-            child: Icon(Icons.bluetooth, size: 40),
-          )),
+            child: const Icon(Icons.bluetooth, size: 40),
+          ),
+        ),
+      ),
     );
-  }
+  } 
 }

@@ -104,7 +104,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `rooms` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `roomID` TEXT NOT NULL, `roomName` TEXT NOT NULL)');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `lights` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `lightName` TEXT NOT NULL, `isOn` INTEGER NOT NULL, `lightColor` TEXT NOT NULL, `roomID` INTEGER, `mode` TEXT NOT NULL)');
+            'CREATE TABLE IF NOT EXISTS `lights` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `lightName` TEXT NOT NULL, `isOn` INTEGER NOT NULL, `lightColor` TEXT NOT NULL, `roomID` INTEGER, `brightness` REAL NOT NULL)');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `users` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `userID` TEXT NOT NULL, `email` TEXT NOT NULL, `profileImage` TEXT NOT NULL)');
         await database.execute(
@@ -236,7 +236,7 @@ class _$LightDao extends LightDao {
                   'isOn': item.isOn ? 1 : 0,
                   'lightColor': item.lightColor,
                   'roomID': item.roomID,
-                  'mode': item.mode
+                  'brightness': item.brightness
                 },
             changeListener),
         _lightUpdateAdapter = UpdateAdapter(
@@ -249,7 +249,7 @@ class _$LightDao extends LightDao {
                   'isOn': item.isOn ? 1 : 0,
                   'lightColor': item.lightColor,
                   'roomID': item.roomID,
-                  'mode': item.mode
+                  'brightness': item.brightness
                 },
             changeListener),
         _lightDeletionAdapter = DeletionAdapter(
@@ -262,7 +262,7 @@ class _$LightDao extends LightDao {
                   'isOn': item.isOn ? 1 : 0,
                   'lightColor': item.lightColor,
                   'roomID': item.roomID,
-                  'mode': item.mode
+                  'brightness': item.brightness
                 },
             changeListener);
 
@@ -287,7 +287,7 @@ class _$LightDao extends LightDao {
             isOn: (row['isOn'] as int) != 0,
             lightColor: row['lightColor'] as String,
             roomID: row['roomID'] as int?,
-            mode: row['mode'] as String));
+            brightness: row['brightness'] as double));
   }
 
   @override
@@ -299,7 +299,7 @@ class _$LightDao extends LightDao {
             isOn: (row['isOn'] as int) != 0,
             lightColor: row['lightColor'] as String,
             roomID: row['roomID'] as int?,
-            mode: row['mode'] as String),
+            brightness: row['brightness'] as double),
         arguments: [id],
         queryableName: 'lights',
         isView: false);
