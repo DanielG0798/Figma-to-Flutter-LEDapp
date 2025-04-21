@@ -1,5 +1,4 @@
 import 'package:floor/floor.dart';
-import '../models/light.dart';
 
 @Entity(tableName: 'rooms')
 class Room {

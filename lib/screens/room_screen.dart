@@ -9,7 +9,7 @@ import 'package:provider/provider.dart'; // Import Provider
 class RoomScreen extends StatefulWidget {
   final Room room; // Receive the Room object
 
-  const RoomScreen({Key? key, required this.room}) : super(key: key);
+  const RoomScreen({super.key, required this.room});
 
   @override
   State<RoomScreen> createState() => _RoomScreenState();
@@ -102,52 +102,44 @@ class _RoomScreenState extends State<RoomScreen> {
 
 // Function will help modify the light color
   void _modifyLight(int index) {
-    Color pickerColor =
-        Color(int.parse(_lights[index].lightColor.replaceFirst('#', '0xff')));
+  Color pickerColor = Color(int.parse(_lights[index].lightColor.replaceFirst('#', '0xff')));
 
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Pick a color'),
-          content: SingleChildScrollView(
-            child: ColorPicker(
-              pickerColor: pickerColor,
-              onColorChanged: (color) => pickerColor = color,
-            ),
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: const Text('Pick a color'),
+        content: SingleChildScrollView(
+          child: ColorPicker(
+            pickerColor: pickerColor,
+            onColorChanged: (color) => pickerColor = color,
           ),
-          actions: [
-            TextButton(
-              onPressed: () async {
-                setState(() {
-                  String hexColor =
-                      '#${pickerColor.value.toRadixString(16).substring(2)}';
-                  final updateLight =
-                      _lights[index].copyWith(lightColor: hexColor);
-                });
-                final database = Provider.of<AppDatabase>(context,
-                    listen: false); // Get database
+        ),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              final String hexColor = '#${pickerColor.value.toRadixString(16).substring(2)}';
 
-                final updatedLight = Light(
-                  id: _lights[index].id,
-                  roomID: _room.id, // Use _room.id
-                  lightName: _lights[index].lightName,
-                  lightColor: _lights[index].lightColor,
-                  isOn: _lights[index].isOn,
-                  mode: _lights[index].mode,
-                );
+              // Use copyWith to create a new light with the updated color
+              final updatedLight = _lights[index].copyWith(lightColor: hexColor);
 
-                await database.lightDao.updateLight(updatedLight);
-                await _loadLights();
-                Navigator.of(context).pop();
-              },
-              child: const Text('Save'),
-            )
-          ],
-        );
-      },
-    );
-  }
+              final database = Provider.of<AppDatabase>(context, listen: false);
+              await database.lightDao.updateLight(updatedLight);
+
+              setState(() {
+                _lights[index] = updatedLight; // Update the in-memory list
+              });
+
+              Navigator.of(context).pop();
+            },
+            child: const Text('Save'),
+          )
+        ],
+      );
+    },
+  );
+}
+
 
   @override
   void dispose() {
