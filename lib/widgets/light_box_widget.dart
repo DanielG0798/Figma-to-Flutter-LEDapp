@@ -87,7 +87,7 @@ class LightWidget extends StatelessWidget {
             ),
             // Add Delete Button (Trash Icon)
             IconButton(
-              icon: const Icon(Icons.delete, color: Colors.red), // Delete icon
+              icon: const Icon(Icons.delete, color: Color.fromARGB(255, 91, 89, 89)), // Delete icon
               onPressed: onDelete, // Call the onDelete callback
               ),
             ],
