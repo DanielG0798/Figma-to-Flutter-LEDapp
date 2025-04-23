@@ -1,6 +1,6 @@
 # Figma-to-Flutter-LEDapp
 
-A Flutter-based mobile application to control LED lights. The UI is inspired by a custom design prototype made in Figma, aiming for accessability and intuitive user experience.
+A Flutter-based mobile application to control LED lights. The UI is inspired by a custom design prototype made in Figma, aiming for accessibility and intuitive user experience.
 
 ## Table of Contents
 
