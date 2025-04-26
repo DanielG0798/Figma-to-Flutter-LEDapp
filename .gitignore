@@ -38,6 +38,13 @@ app.*.symbols
 # Obfuscation related
 app.*.map.json
 
+# Environment config files
+.env
+.env.*
+firebase_admin_sdk.json
+google-services.json
+*.keystore
+
 # Android Studio will place build artifacts here
 /android/app/.cxx/debug
 /android/app/debug
